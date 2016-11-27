@@ -78,25 +78,6 @@ namespace Calculator
 		return isEndOfExp() ? exp_[exp_.size() - 1] : exp_[index_++];
 	}
 
-	Token Scanner::getToken()
-	{
-		if (!isdigit(peekChar()))
-		{
-			return Token(TokenType::INVALID, 0.0);
-		}
-		else
-		{
-			std::string value;
-			value.append(getNumber());
-			if (peekChar() == '.')
-			{
-				value.push_back(getChar());
-				value.append(getNumber());
-			}
-			return Token(TokenType::DECIMAL, toDouble(value));
-		}
-	}
-
 	inline Token Scanner::peekToken()
 	{
 		Scanner tempSc = Scanner(exp_);
@@ -141,96 +122,25 @@ namespace Calculator
 		}
 
 	public:
-		double exp2()
-		{
-			auto lhs = exp1();
-
-			while (!scanner_.isEndOfExp() && scanner_.peekChar() != ')')
-			{
-				if (scanner_.peekChar() == '+')
-				{
-					scanner_.getChar();	// skip
-					lhs += exp2();
-				}
-				else if (scanner_.peekChar() == '-')
-				{
-					scanner_.getChar();	// skip
-					lhs -= exp2();
-				}
-				//else if (scanner_.peekChar() == ')')
-				//{
-				//	exp1();
-				//}
-				else
-				{
-					;
-				}
-			}
-
-			return lhs;
-
-		}
-
-		double exp1()
-		{
-			auto lhs = term();
-
-			if (scanner_.peekChar() == '*')
-			{
-				scanner_.getChar();	// skip
-				lhs *= exp1();
-			}
-			else if (scanner_.peekChar() == '/')
-			{
-				scanner_.getChar();	//skip
-				lhs /= exp1();
-			}
-			//else if (scanner_.peekChar() == ')')
-			//{
-			//	exp1();
-			//}
-			else
-			{
-				;
-			}
-
-			return lhs;
-		}
-
-		double term()
-		{
-			double result;
-			if (scanner_.peekChar() == '(')
-			{
-				scanner_.getChar();	// skip
-				result = exp();
-				if (scanner_.peekChar() == ')')
-				{
-					scanner_.getChar(); //skip
-				}
-				else
-				{
-					// error
-				}
-
-			}
-			else
-			{
-				result = scanner_.getToken().value();
-			}
-
-			return result;
-
-		}
-
-		double exp()
-		{
-			return exp2();
-		}
+		double						exp();
+		double						exp2();
+		double						exp1();
+		double						term();
 
 	private:
 		Scanner scanner_;
 	};
+
+	inline double Parser::exp()
+	{
+		return exp2();
+	}
+
+
+
+
+
+
 
 
 
