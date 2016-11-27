@@ -130,7 +130,123 @@ namespace Calculator
 		}
 		return value;
 	}
+
+
+	class Parser
+	{
+	public:
+		Parser(std::string exp) :scanner_(exp)
+		{
+
+		}
+
+	public:
+		double exp2()
+		{
+			auto lhs = exp1();
+
+			while (!scanner_.isEndOfExp() && scanner_.peekChar() != ')')
+			{
+				if (scanner_.peekChar() == '+')
+				{
+					scanner_.getChar();	// skip
+					lhs += exp2();
+				}
+				else if (scanner_.peekChar() == '-')
+				{
+					scanner_.getChar();	// skip
+					lhs -= exp2();
+				}
+				//else if (scanner_.peekChar() == ')')
+				//{
+				//	exp1();
+				//}
+				else
+				{
+					;
+				}
+			}
+
+			return lhs;
+
+		}
+
+		double exp1()
+		{
+			auto lhs = term();
+
+			if (scanner_.peekChar() == '*')
+			{
+				scanner_.getChar();	// skip
+				lhs *= exp1();
+			}
+			else if (scanner_.peekChar() == '/')
+			{
+				scanner_.getChar();	//skip
+				lhs /= exp1();
+			}
+			//else if (scanner_.peekChar() == ')')
+			//{
+			//	exp1();
+			//}
+			else
+			{
+				;
+			}
+
+			return lhs;
+		}
+
+		double term()
+		{
+			double result;
+			if (scanner_.peekChar() == '(')
+			{
+				scanner_.getChar();	// skip
+				result = exp();
+				if (scanner_.peekChar() == ')')
+				{
+					scanner_.getChar(); //skip
+				}
+				else
+				{
+					// error
+				}
+
+			}
+			else
+			{
+				result = scanner_.getToken().value();
+			}
+
+			return result;
+
+		}
+
+		double exp()
+		{
+			return exp2();
+		}
+
+	private:
+		Scanner scanner_;
+	};
+
+
+
+	
+
+
+
+
+
+
 }
+
+
+
+
+
 
 
 
