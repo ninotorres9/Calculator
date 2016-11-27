@@ -87,9 +87,8 @@ namespace TestCalculator
 			double exp2()
 			{
 				auto lhs = exp1();
-				// auto lhs = term();
 
-				while (!scanner_.isEndOfExp())
+				while (!scanner_.isEndOfExp() && scanner_.peekChar() != ')')
 				{
 					if (scanner_.peekChar() == '+')
 					{
@@ -101,9 +100,13 @@ namespace TestCalculator
 						scanner_.getChar();	// skip
 						lhs -= exp2();
 					}
+					//else if (scanner_.peekChar() == ')')
+					//{
+					//	exp1();
+					//}
 					else
 					{
-						lhs = exp1();
+						;
 					}
 				}
 
@@ -125,9 +128,13 @@ namespace TestCalculator
 					scanner_.getChar();	//skip
 					lhs /= exp1();
 				}
+				//else if (scanner_.peekChar() == ')')
+				//{
+				//	exp1();
+				//}
 				else
 				{
-					// lhs = term();
+					;
 				}
 
 				return lhs;
@@ -135,29 +142,28 @@ namespace TestCalculator
 
 			double term()
 			{
-				//double result;
-				//if (scanner_.peekChar() == '(')
-				//{
-				//	scanner_.getChar();	// skip
-				//	result = exp();
-				//	if (scanner_.peekChar() == ')')
-				//	{
-				//		scanner_.getChar(); //skip
-				//	}
-				//	else
-				//	{
-				//		// error
-				//	}
+				double result;
+				if (scanner_.peekChar() == '(')
+				{
+					scanner_.getChar();	// skip
+					result = exp();
+					if (scanner_.peekChar() == ')')
+					{
+						scanner_.getChar(); //skip
+					}
+					else
+					{
+						// error
+					}
 
-				//}
-				//else
-				//{
-				//	result = scanner_.getToken().value();
-				//}
+				}
+				else
+				{
+					result = scanner_.getToken().value();
+				}
 
-				//return result;
+				return result;
 
-				return scanner_.getToken().value();
 			}
 
 			double exp()
@@ -198,8 +204,20 @@ namespace TestCalculator
 			parser = Parser("1+3*2+1");
 			Assert::AreEqual(parser.exp(), 8.0, L"expression result");
 
-			//parser = Parser("10+2");
-			//Assert::AreEqual(parser.exp(), 12.0, L"expression result");
+			parser = Parser("3*2+1+15");
+			Assert::AreEqual(parser.exp(), 22.0, L"expression result");
+
+			parser = Parser("(10+2)");
+			Assert::AreEqual(parser.exp(), 12.0, L"expression result");
+
+			parser = Parser("(10*2)");
+			Assert::AreEqual(parser.exp(), 20.0, L"expression result");
+
+			parser = Parser("(10+2)*3");
+			Assert::AreEqual(parser.exp(), 36.0, L"expression result");
+
+			parser = Parser("(10+2)*3*(1+2)");
+			Assert::AreEqual(parser.exp(), 108.0, L"expression result");
 
 
 		}
