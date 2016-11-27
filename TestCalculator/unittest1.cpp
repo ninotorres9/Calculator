@@ -79,48 +79,27 @@ namespace TestCalculator
 
 		TEST_METHOD(TestParser)
 		{
+
 			Parser parser = Parser("1+2");
-			Assert::AreEqual(parser.exp(), 3.0, L"expression result");
-
-			parser = Parser("3+2");
-			Assert::AreEqual(parser.exp(), 5.0, L"expression result");
-
-			parser = Parser("3");
-			Assert::AreEqual(parser.exp(), 3.0, L"expression result");
-
-			parser = Parser("3+3+3");
-			Assert::AreEqual(parser.exp(), 9.0, L"expression result");
+			Assert::AreEqual(parser.exp(), 3.0, L"Expression result for add");
 
 			parser = Parser("3-3+3-3");
-			Assert::AreEqual(parser.exp(), 0.0, L"expression result");
+			Assert::AreEqual(parser.exp(), 0.0, L"Expression result for add and sub");
 
 			parser = Parser("3*2");
-			Assert::AreEqual(parser.exp(), 6.0, L"expression result");
+			Assert::AreEqual(parser.exp(), 6.0, L"Expression result for mul");
 
-			parser = Parser("3*2+1");
-			Assert::AreEqual(parser.exp(), 7.0, L"expression result");
-
-			parser = Parser("1+3*2");
-			Assert::AreEqual(parser.exp(), 7.0, L"expression result");
-
-			parser = Parser("1+3*2+1");
-			Assert::AreEqual(parser.exp(), 8.0, L"expression result");
-
-			parser = Parser("3*2+1+15");
-			Assert::AreEqual(parser.exp(), 22.0, L"expression result");
+			parser = Parser("3+2*5/2-1");
+			Assert::AreEqual(parser.exp(), 7.0, L"Expression result for four operations");
 
 			parser = Parser("(10+2)");
-			Assert::AreEqual(parser.exp(), 12.0, L"expression result");
-
-			parser = Parser("(10*2)");
-			Assert::AreEqual(parser.exp(), 20.0, L"expression result");
-
-			parser = Parser("(10+2)*3");
-			Assert::AreEqual(parser.exp(), 36.0, L"expression result");
+			Assert::AreEqual(parser.exp(), 12.0, L"Expression result for parenthesis");
 
 			parser = Parser("(10+2)*3*(1+2)");
-			Assert::AreEqual(parser.exp(), 108.0, L"expression result");
+			Assert::AreEqual(parser.exp(), 108.0, L"Expression result for mixed");
 
+			parser = Parser("0.5*2+10");
+			Assert::AreEqual(parser.exp(), 11.0, L"Expression result for demical");
 
 		}
 
