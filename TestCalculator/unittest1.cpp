@@ -103,6 +103,17 @@ namespace TestCalculator
 
 		}
 
+		class Calculator
+		{
+			
+		};
+
+
+		TEST_METHOD(TestCalculator)
+		{
+			auto calculator = Calculator();
+		}
+
 	};
 }
 
