@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "Parser.h"
+#include "Expression.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Calculator;
@@ -103,15 +104,36 @@ namespace TestCalculator
 
 		}
 
-		class Calculator
-		{
-			
-		};
+		//class Calculator
+		//{
+		//public:
+		//	Calculator(std::string exp) : exp_(exp)
+		//	{
+		//		;
+		//	}
+		//
+		//public:
+
+		//	inline double Calculator::exp()
+		//	{
+		//		Parser parser = Parser(exp_);
+		//		return parser.exp();
+		//	}
 
 
-		TEST_METHOD(TestCalculator)
+		//private:
+		//	std::string exp_;
+		//};
+
+
+
+
+
+
+		TEST_METHOD(TestExpression)
 		{
-			auto calculator = Calculator();
+			auto expression = Expression("1+2+3");
+			Assert::AreEqual(expression.result(), 6.0, L"expression result");
 		}
 
 	};
