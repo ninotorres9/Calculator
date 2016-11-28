@@ -4,27 +4,18 @@
 
 namespace Calculator
 {
-	class Expression
+	extern "C" __declspec(dllexport) double expression(std::string exp)
 	{
-	public:
-		Expression(std::string exp) : exp_(exp)
-		{
-			;
-		}
-
-	public:
-		double result();
-
-	private:
-		std::string exp_;
-	};
-
-	inline double Expression::result()
-	{
-		Parser parser = Parser(exp_);
+		Parser parser = Parser(exp);
 		return parser.exp();
 	}
+
+	extern "C" __declspec(dllexport)const char* demo(const char* a)
+	{
+		return a;
+	}
 }
+
 
 
 

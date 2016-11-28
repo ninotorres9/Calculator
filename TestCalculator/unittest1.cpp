@@ -3,6 +3,7 @@
 #include "Parser.h"
 #include "Expression.h"
 
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Calculator;
 
@@ -126,14 +127,10 @@ namespace TestCalculator
 		//};
 
 
-
-
-
-
 		TEST_METHOD(TestExpression)
 		{
-			auto expression = Expression("1+2+3");
-			Assert::AreEqual(expression.result(), 6.0, L"expression result");
+			auto result = expression("1+2+3");
+			Assert::AreEqual(result, 6.0, L"expression result");
 		}
 
 	};
