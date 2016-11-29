@@ -105,28 +105,6 @@ namespace TestCalculator
 
 		}
 
-		//class Calculator
-		//{
-		//public:
-		//	Calculator(std::string exp) : exp_(exp)
-		//	{
-		//		;
-		//	}
-		//
-		//public:
-
-		//	inline double Calculator::exp()
-		//	{
-		//		Parser parser = Parser(exp_);
-		//		return parser.exp();
-		//	}
-
-
-		//private:
-		//	std::string exp_;
-		//};
-
-
 		TEST_METHOD(TestExpression)
 		{
 			auto result = expression("1+2+3");

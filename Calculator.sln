@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Calculator", "Calculator\Ca
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCalculator", "TestCalculator\TestCalculator.vcxproj", "{EDB6CEBA-7BD7-47A9-9611-05A2E4169F01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcWindow", "CalcWindow\CalcWindow.csproj", "{C850F40D-6AE1-4A5D-95FB-3F37606701B5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,18 +37,6 @@ Global
 		{EDB6CEBA-7BD7-47A9-9611-05A2E4169F01}.Release|x64.Build.0 = Release|x64
 		{EDB6CEBA-7BD7-47A9-9611-05A2E4169F01}.Release|x86.ActiveCfg = Release|Win32
 		{EDB6CEBA-7BD7-47A9-9611-05A2E4169F01}.Release|x86.Build.0 = Release|Win32
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Debug|x64.Build.0 = Debug|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Debug|x86.Build.0 = Debug|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Release|x64.ActiveCfg = Release|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Release|x64.Build.0 = Release|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Release|x86.ActiveCfg = Release|Any CPU
-		{C850F40D-6AE1-4A5D-95FB-3F37606701B5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
