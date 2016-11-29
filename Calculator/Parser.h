@@ -137,6 +137,40 @@ namespace Calculator
 	}
 
 
+	class AsmParser
+	{
+	public:
+		AsmParser(std::string exp) :scanner_(exp)
+		{
+
+		}
+
+	public:
+		std::string					exp();
+		std::string					exp2();
+		std::string					exp1();
+		std::string					term();
+
+	public:
+		std::string toThreeDecimals(double decimal);
+
+	private:
+		Scanner scanner_;
+
+	};
+
+	inline std::string AsmParser::exp()
+	{
+		return exp2();
+	}
+
+	inline std::string AsmParser::toThreeDecimals(double decimal)
+	{
+		std::string buffer = std::to_string(decimal);
+		return std::string(buffer.begin(), buffer.end() - 3);
+	}
+
+
 
 
 

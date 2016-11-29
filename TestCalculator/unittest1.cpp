@@ -3,6 +3,7 @@
 #include "Parser.h"
 #include "Expression.h"
 
+#include <vector>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Calculator;
@@ -109,6 +110,42 @@ namespace TestCalculator
 		{
 			auto result = expression("1+2+3");
 			Assert::AreEqual(result, 6.0, L"expression result");
+		}
+
+
+		TEST_METHOD(TestAsmParser)
+		{
+
+			auto asmParser = AsmParser("1");
+			Assert::AreEqual(asmParser.exp(), std::string("push 1.000\n"), L"generate result for one number");
+
+			asmParser = AsmParser("1+2");
+			Assert::AreEqual(asmParser.exp(), 
+				std::string("push 1.000\n") + "push 2.000\n" + "pop eax\n" + "pop ebx\n" 
+							+ "add eax, ebx\n" + "push eax\n",
+				L"generate result for add");
+
+			asmParser = AsmParser("3*3");
+			Assert::AreEqual(asmParser.exp(),
+				std::string("push 3.000\n") + "push 3.000\n" + "pop eax\n" + "pop ebx\n"
+					+ "imul eax, ebx\n" + "push eax\n",
+				L"generate result for mul");
+
+			asmParser = AsmParser("1+5*2");
+			Assert::AreEqual(asmParser.exp(),
+				std::string("push 1.000\n") + "push 5.000\n" + "push 2.000\n" + "pop eax\n" + "pop ebx\n"
+					+ "imul eax, ebx\n" + "push eax\n" + "pop eax\n" + "pop ebx\n" + "add eax, ebx\n"
+					+ "push eax\n",
+				L"generate result for mixed");
+
+			asmParser = AsmParser("(10+2)");
+			Assert::AreEqual(asmParser.exp(),
+				std::string("push 10.000\n") + "push 2.000\n" + "pop eax\n" + "pop ebx\n"
+				+ "add eax, ebx\n" + "push eax\n",
+				L"generate result for add");
+
+
+
 		}
 
 	};
