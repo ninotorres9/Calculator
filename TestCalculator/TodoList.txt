@@ -1,6 +1,2 @@
 
-
-Scanner 设置成setup
-getToken
-整数位首个数字不能为0
 Parser类多态

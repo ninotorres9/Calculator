@@ -113,10 +113,11 @@ namespace Calculator
 	}
 
 
-	class Parser
+
+	class ExpParser
 	{
 	public:
-		Parser(std::string exp) :scanner_(exp)
+		ExpParser(std::string exp) :scanner_(exp)
 		{
 
 		}
@@ -127,11 +128,37 @@ namespace Calculator
 		double						exp1();
 		double						term();
 
+	public:
+		inline void handleAddExp(double &lhs)
+		{
+			scanner_.getChar();	// skip
+			lhs += exp2();
+		}
+		inline void handleSubExp(double &lhs)
+		{
+			scanner_.getChar();	//skip
+			lhs -= exp2();
+		}
+		inline void handleMulExp(double &lhs)
+		{
+			scanner_.getChar();	// skip
+			lhs *= exp1();
+		}
+		inline void handleDivExp(double &lhs)
+		{
+			scanner_.getChar();	//skip
+			lhs /= exp1();
+		}
+		inline void handleTermExp(double &lhs)
+		{
+			lhs = scanner_.getToken().value();
+		}
+
 	private:
 		Scanner scanner_;
 	};
 
-	inline double Parser::exp()
+	inline double ExpParser::exp()
 	{
 		return exp2();
 	}

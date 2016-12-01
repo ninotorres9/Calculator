@@ -24,7 +24,7 @@ Token Scanner::getToken()
 	}
 }
 
-double Parser::exp2()
+double ExpParser::exp2()
 {
 	auto lhs = exp1();
 
@@ -33,12 +33,10 @@ double Parser::exp2()
 		switch (scanner_.peekChar())
 		{
 		case '+':
-			scanner_.getChar();	// skip
-			lhs += exp2();
+			handleAddExp(lhs);
 			break;
 		case '-':
-			scanner_.getChar();	//skip
-			lhs -= exp2();
+			handleSubExp(lhs);
 			break;
 		default:
 			break;
@@ -48,19 +46,17 @@ double Parser::exp2()
 	return lhs;
 }
 
-double Parser::exp1()
+double ExpParser::exp1()
 {
 	auto lhs = term();
 
 	switch (scanner_.peekChar())
 	{
 	case '*':
-		scanner_.getChar();	// skip
-		lhs *= exp1();
+		handleMulExp(lhs);
 		break;
 	case '/':
-		scanner_.getChar();	//skip
-		lhs /= exp1();
+		handleDivExp(lhs);
 		break;
 	default:
 		break;
@@ -69,7 +65,7 @@ double Parser::exp1()
 	return lhs;
 }
 
-double Parser::term()
+double ExpParser::term()
 {
 	double result;
 
@@ -85,17 +81,90 @@ double Parser::term()
 		{
 			;
 		}
-
 	}
 	else
 	{
-		result = scanner_.getToken().value();
+		handleTermExp(result);
 	}
 
 	return result;
 
+
+
+
 }
 
+//
+//double Parser::exp2()
+//{
+//	auto lhs = exp1();
+//
+//	while (!scanner_.isEndOfExp() && scanner_.peekChar() != ')')
+//	{
+//		switch (scanner_.peekChar())
+//		{
+//		case '+':
+//			// handleAddExp(lhs);
+//			lhs = handleAddExp(lhs);
+//			break;
+//		case '-':
+//			handleSubExp(lhs);
+//			break;
+//		default:
+//			break;
+//		}
+//	}
+//
+//	return lhs;
+//}
+//
+//double Parser::exp1()
+//{
+//	auto lhs = term();
+//
+//	switch (scanner_.peekChar())
+//	{
+//	case '*':
+//		handleMulExp(lhs);
+//		break;
+//	case '/':
+//		handleDivExp(lhs);
+//		break;
+//	default:
+//		break;
+//	}
+//
+//	return lhs;
+//}
+//
+//double Parser::term()
+//{
+//	double result;
+//
+//	if (scanner_.peekChar() == '(')
+//	{
+//		scanner_.getChar();	// skip
+//		result = exp();
+//		if (scanner_.peekChar() == ')')
+//		{
+//			scanner_.getChar(); //skip
+//		}
+//		else
+//		{
+//			;
+//		}
+//	}
+//	else
+//	{
+//		handleTermExp(result);
+//	}
+//
+//	return result;
+//
+//
+//
+//
+//}
 
 
 
@@ -106,7 +175,6 @@ double Parser::term()
 
 std::string AsmParser::exp2()
 {
-	// auto lhs = term();
 	auto lhs = exp1();
 
 	while (!scanner_.isEndOfExp() && scanner_.peekChar() != ')')

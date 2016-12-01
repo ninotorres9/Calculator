@@ -82,36 +82,28 @@ namespace TestCalculator
 
 		TEST_METHOD(TestParser)
 		{
-
-			Parser parser = Parser("1+2");
+			ExpParser parser = ExpParser("1+2");
 			Assert::AreEqual(parser.exp(), 3.0, L"Expression result for add");
 
-			parser = Parser("3-3+3-3");
+			parser = ExpParser("3-3+3-3");
 			Assert::AreEqual(parser.exp(), 0.0, L"Expression result for add and sub");
 
-			parser = Parser("3*2");
+			parser = ExpParser("3*2");
 			Assert::AreEqual(parser.exp(), 6.0, L"Expression result for mul");
 
-			parser = Parser("3+2*5/2-1");
+			parser = ExpParser("3+2*5/2-1");
 			Assert::AreEqual(parser.exp(), 7.0, L"Expression result for four operations");
 
-			parser = Parser("(10+2)");
+			parser = ExpParser("(10+2)");
 			Assert::AreEqual(parser.exp(), 12.0, L"Expression result for parenthesis");
 
-			parser = Parser("(10+2)*3*(1+2)");
+			parser = ExpParser("(10+2)*3*(1+2)");
 			Assert::AreEqual(parser.exp(), 108.0, L"Expression result for mixed");
 
-			parser = Parser("0.5*2+10");
+			parser = ExpParser("0.5*2+10");
 			Assert::AreEqual(parser.exp(), 11.0, L"Expression result for demical");
 
 		}
-
-		TEST_METHOD(TestExpression)
-		{
-			auto result = expression("1+2+3");
-			Assert::AreEqual(result, 6.0, L"expression result");
-		}
-
 
 		TEST_METHOD(TestAsmParser)
 		{
@@ -143,9 +135,16 @@ namespace TestCalculator
 				std::string("push 10.000\n") + "push 2.000\n" + "pop eax\n" + "pop ebx\n"
 				+ "add eax, ebx\n" + "push eax\n",
 				L"generate result for add");
+		}
 
-
-
+		TEST_METHOD(TestExpression)
+		{
+			Expression expression = Expression("1+2+3");
+			double r = expression.result();
+			Assert::AreEqual(r, 6.0, L"expression result");
+			
+			expression = Expression("1*1+2");
+			Assert::AreEqual(expression.result(), 3.0);
 		}
 
 	};
