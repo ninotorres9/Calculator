@@ -6,13 +6,10 @@
 namespace Calculator
 {
 
-
-
-
-	class ExpParser
+	class Parser
 	{
 	public:
-		ExpParser(std::string exp) :scanner_(exp)
+		Parser(std::string exp) :scanner_(exp)
 		{
 
 		}
@@ -23,6 +20,33 @@ namespace Calculator
 		double						exp2();
 		double						exp1();
 		double						term();
+
+	public:
+		inline virtual void handleAddExp(double &lhs) = 0;
+		inline virtual void handleSubExp(double &lhs) = 0;
+		inline virtual void handleMulExp(double &lhs) = 0;
+		inline virtual void handleDivExp(double &lhs) = 0;
+		inline virtual void handleSquareExp(double &lhs) = 0;
+		inline virtual void handleTermExp(double &lhs) = 0;
+
+	protected:
+		Scanner scanner_;
+	};
+
+	inline double Parser::exp()
+	{
+		return exp3();
+	}
+
+
+
+	class ExpParser : public Parser
+	{
+	public:
+		ExpParser(std::string exp) : Parser(exp)
+		{
+
+		}
 
 	public:
 		inline void handleAddExp(double &lhs)
@@ -37,7 +61,7 @@ namespace Calculator
 		}
 		inline void handleMulExp(double &lhs)
 		{
-			scanner_.skipChar();	
+			scanner_.skipChar();
 			lhs *= exp2();
 		}
 		inline void handleDivExp(double &lhs)
@@ -54,15 +78,9 @@ namespace Calculator
 		{
 			lhs = scanner_.getToken().value();
 		}
-
-	private:
-		Scanner scanner_;
 	};
 
-	inline double ExpParser::exp()
-	{
-		return exp3();
-	}
+
 
 
 	class AsmParser
@@ -106,7 +124,12 @@ namespace Calculator
 
 
 
-	
+
+
+
+
+
+
 
 
 

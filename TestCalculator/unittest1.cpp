@@ -4,6 +4,7 @@
 #include "Expression.h"
 
 #include <vector>
+#include <memory>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Calculator;
@@ -86,34 +87,38 @@ namespace TestCalculator
 		
 		}
 
-		TEST_METHOD(TestParser)
+		TEST_METHOD(TestExpParser)
 		{
-			ExpParser parser = ExpParser("1+2");
-			Assert::AreEqual(parser.exp(), 3.0, L"Expression result for add");
 
-			parser = ExpParser("3-3+3-3");
-			Assert::AreEqual(parser.exp(), 0.0, L"Expression result for add and sub");
+			Parser *parser = new ExpParser("1+2");
+			Assert::AreEqual(parser->exp(), 3.0, L"Expression result for add");
 
-			parser = ExpParser("3*2");
-			Assert::AreEqual(parser.exp(), 6.0, L"Expression result for mul");
+			parser = new ExpParser("1+2");
+			Assert::AreEqual(parser->exp(), 3.0, L"Expression result for add");
 
-			parser = ExpParser("3+2*5/2-1");
-			Assert::AreEqual(parser.exp(), 7.0, L"Expression result for four operations");
+			parser = new ExpParser("3-3+3-3");
+			Assert::AreEqual(parser->exp(), 0.0, L"Expression result for add and sub");
 
-			parser = ExpParser("(10+2)");
-			Assert::AreEqual(parser.exp(), 12.0, L"Expression result for parenthesis");
+			parser = new ExpParser("3*2");
+			Assert::AreEqual(parser->exp(), 6.0, L"Expression result for mul");
 
-			parser = ExpParser("(10+2)*3*(1+2)");
-			Assert::AreEqual(parser.exp(), 108.0, L"Expression result for mixed");
+			parser = new ExpParser("3+2*5/2-1");
+			Assert::AreEqual(parser->exp(), 7.0, L"Expression result for four operations");
 
-			parser = ExpParser("0.5*2+10");
-			Assert::AreEqual(parser.exp(), 11.0, L"Expression result for demical");
+			parser = new ExpParser("(10+2)");
+			Assert::AreEqual(parser->exp(), 12.0, L"Expression result for parenthesis");
 
-			parser = ExpParser("3^2");
-			Assert::AreEqual(parser.exp(), 9.0, L"Expression result for square");
+			parser = new ExpParser("(10+2)*3*(1+2)");
+			Assert::AreEqual(parser->exp(), 108.0, L"Expression result for mixed");
 
-			parser = ExpParser("3^2+2");
-			Assert::AreEqual(parser.exp(), 11.0, L"Expression result for square");
+			parser = new ExpParser("0.5*2+10");
+			Assert::AreEqual(parser->exp(), 11.0, L"Expression result for demical");
+
+			parser = new ExpParser("3^2");
+			Assert::AreEqual(parser->exp(), 9.0, L"Expression result for square");
+
+			parser = new ExpParser("3^2+2");
+			Assert::AreEqual(parser->exp(), 11.0, L"Expression result for square");
 		}
 
 		TEST_METHOD(TestAsmParser)
@@ -148,15 +153,20 @@ namespace TestCalculator
 				L"generate result for add");
 		}
 
-		TEST_METHOD(TestExpression)
-		{
-			Expression expression = Expression("1+2+3");
-			double r = expression.result();
-			Assert::AreEqual(r, 6.0, L"expression result");
-			
-			expression = Expression("1*1+2");
-			Assert::AreEqual(expression.result(), 3.0);
-		}
+		//TEST_METHOD(TestExpression)
+		//{
+		//	Expression expression = Expression("1+2+3");
+		//	double r = expression.result();
+		//	Assert::AreEqual(r, 6.0, L"expression result");
+		//	
+		//	expression = Expression("1*1+2");
+		//	Assert::AreEqual(expression.result(), 3.0);
+		//}
+
+
+
+
+
 
 	};
 }
