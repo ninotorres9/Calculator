@@ -124,30 +124,43 @@ namespace Calculator
 
 	public:
 		double						exp();
+		double						exp3();
 		double						exp2();
 		double						exp1();
 		double						term();
+
+
+
+
+	
+
+
 
 	public:
 		inline void handleAddExp(double &lhs)
 		{
 			scanner_.getChar();	// skip
-			lhs += exp2();
+			lhs += exp3();
 		}
 		inline void handleSubExp(double &lhs)
 		{
 			scanner_.getChar();	//skip
-			lhs -= exp2();
+			lhs -= exp3();
 		}
 		inline void handleMulExp(double &lhs)
 		{
 			scanner_.getChar();	// skip
-			lhs *= exp1();
+			lhs *= exp2();
 		}
 		inline void handleDivExp(double &lhs)
 		{
 			scanner_.getChar();	//skip
-			lhs /= exp1();
+			lhs /= exp2();
+		}
+		inline void handleSquareExp(double &lhs)
+		{
+			scanner_.getChar();	//skip
+			lhs = pow(lhs, exp1());
 		}
 		inline void handleTermExp(double &lhs)
 		{
@@ -160,7 +173,7 @@ namespace Calculator
 
 	inline double ExpParser::exp()
 	{
-		return exp2();
+		return exp3();
 	}
 
 
@@ -174,8 +187,8 @@ namespace Calculator
 
 	public:
 		std::string					exp();
+		std::string					exp3();
 		std::string					exp2();
-		std::string					exp1();
 		std::string					term();
 
 	public:
@@ -188,7 +201,7 @@ namespace Calculator
 
 	inline std::string AsmParser::exp()
 	{
-		return exp2();
+		return exp3();
 	}
 
 	inline std::string AsmParser::toThreeDecimals(double decimal)

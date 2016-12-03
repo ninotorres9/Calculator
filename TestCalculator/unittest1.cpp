@@ -103,6 +103,11 @@ namespace TestCalculator
 			parser = ExpParser("0.5*2+10");
 			Assert::AreEqual(parser.exp(), 11.0, L"Expression result for demical");
 
+			parser = ExpParser("3^2");
+			Assert::AreEqual(parser.exp(), 9.0, L"Expression result for square");
+
+			parser = ExpParser("3^2+2");
+			Assert::AreEqual(parser.exp(), 11.0, L"Expression result for square");
 		}
 
 		TEST_METHOD(TestAsmParser)
