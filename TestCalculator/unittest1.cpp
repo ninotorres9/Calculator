@@ -41,6 +41,15 @@ namespace TestCalculator
 			Assert::AreEqual(scanner.getChar(), '2', L"End of expression");
 			Assert::IsTrue(scanner.isEndOfExp(), L"Is end of expression");
 
+			// skip char
+			scanner = Scanner("1+2");
+			scanner.skipChar();
+			Assert::AreEqual(scanner.peekChar(), '+', L"skip 1 char");
+		
+			scanner = Scanner("1+5");
+			scanner.skipChar(2);
+			Assert::AreEqual(scanner.peekChar(), '5', L"skip 2 char");
+
 			// peek char
 			scanner = Scanner("2");
 			Assert::AreEqual(scanner.peekChar(), '2', L"Peek first char");
@@ -74,11 +83,8 @@ namespace TestCalculator
 			scanner = Scanner("23");
 			Assert::AreEqual(scanner.peekToken().value(), 23.0, L"Peek token");
 			Assert::AreEqual(scanner.peekToken().value(), 23.0, L"Peek token");
-
 		
 		}
-
-		
 
 		TEST_METHOD(TestParser)
 		{

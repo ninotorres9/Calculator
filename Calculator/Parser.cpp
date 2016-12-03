@@ -4,26 +4,6 @@
 
 using namespace Calculator;
 
-
-Token Scanner::getToken()
-{
-	if (!isdigit(peekChar()))
-	{
-		return Token(TokenType::INVALID, 0.0);
-	}
-	else
-	{
-		std::string value;
-		value.append(getNumber());
-		if (peekChar() == '.')
-		{
-			value.push_back(getChar());
-			value.append(getNumber());
-		}
-		return Token(TokenType::DECIMAL, toDouble(value));
-	}
-}
-
 double ExpParser::exp3()
 {
 	auto lhs = exp2();
@@ -88,11 +68,11 @@ double ExpParser::term()
 
 	if (scanner_.peekChar() == '(')
 	{
-		scanner_.getChar();	// skip
+		scanner_.skipChar();	
 		result = exp();
 		if (scanner_.peekChar() == ')')
 		{
-			scanner_.getChar(); //skip
+			scanner_.skipChar(); 
 		}
 		else
 		{
@@ -119,12 +99,12 @@ std::string AsmParser::exp3()
 		switch (scanner_.peekChar())
 		{
 		case '+':
-			scanner_.getChar();	// skip
+			scanner_.skipChar();	
 			lhs += exp3();
 			lhs += std::string("pop eax\n") + "pop ebx\n" + "add eax, ebx\n" + "push eax\n";
 			break;
 		case '-':
-			scanner_.getChar();	//skip
+			scanner_.skipChar();
 			lhs += exp3();
 			lhs += std::string("pop eax\n") + "pop ebx\n" + "sub eax, ebx\n" + "push eax\n";
 			break;
@@ -143,12 +123,12 @@ std::string AsmParser::exp2()
 	switch (scanner_.peekChar())
 	{
 	case '*':
-		scanner_.getChar();	// skip
+		scanner_.skipChar();
 		lhs += exp2();
 		lhs += std::string("pop eax\n") + "pop ebx\n" + "imul eax, ebx\n" + "push eax\n";
 		break;
 	case '/':
-		scanner_.getChar();	//skip
+		scanner_.skipChar();
 		lhs += exp2();
 		lhs += std::string("pop eax\n") + "pop ebx\n" + "idiv eax, ebx\n" + "push eax\n";
 		break;
@@ -165,11 +145,11 @@ std::string AsmParser::term()
 
 	if (scanner_.peekChar() == '(')
 	{
-		scanner_.getChar();	// skip
+		scanner_.skipChar();	
 		result = exp();
 		if (scanner_.peekChar() == ')')
 		{
-			scanner_.getChar(); //skip
+			scanner_.skipChar(); //skip
 		}
 		else
 		{
