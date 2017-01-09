@@ -9,11 +9,7 @@ using namespace Calculator;
 
 Token Scanner::getToken()
 {
-	if (!isdigit(peekChar()))
-	{
-		return Token(TokenType::INVALID, 0.0);
-	}
-	else
+	if (isdigit(peekChar()))
 	{
 		std::string value;
 		value.append(getNumber());
@@ -22,6 +18,30 @@ Token Scanner::getToken()
 			value.push_back(getChar());
 			value.append(getNumber());
 		}
-		return Token(TokenType::DECIMAL, toDouble(value));
+		return Token(TokenType::NUMBER, value);
+	}
+	else if (peekChar() == '+')
+	{
+		skipChar();	//skip the plus
+		return Token(TokenType::PLUS, "+");
+	}
+	else if (peekChar() == '-')
+	{
+		skipChar();	//skip the plus
+		return Token(TokenType::MINUS, "-");
+	}
+	else if (peekChar() == '*')
+	{
+		skipChar();	//skip the plus
+		return Token(TokenType::MUL, "*");
+	}
+	else if (peekChar() == '/')
+	{
+		skipChar();	//skip the plus
+		return Token(TokenType::DIV, "/");
+	}
+	else
+	{
+		return Token(TokenType::INVALID, "0.0");
 	}
 }

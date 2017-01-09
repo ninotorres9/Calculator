@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Token.h"
+
 #include <string>
 #include <sstream>
 #include <vector>
@@ -7,72 +9,47 @@
 
 namespace Calculator
 {
-	enum class TokenType
-	{
-		DECIMAL,
-		INVALID,
-	};
-
-	class Token
-	{
-	public:
-		Token::Token(Token::TokenType type, double value) :type_(type), value_(value)
-		{
-
-		}
-
-	public:
-		TokenType					type();
-		double						value();
-
-	private:
-		TokenType					type_;
-		double						value_;
-	};
-	inline TokenType Token::type()
-	{
-		return type_;
-	}
-	inline double Token::value()
-	{
-		return value_;
-	}
-
-
-
 
 	class Scanner
 	{
 	public:
-		Scanner(std::string exp) :exp_(exp), index_(0)
-		{
-
-		}
+		Scanner(std::string exp) :exp_(exp), index_(0) { ; }
 
 	public:
 		char							peekChar();
 		char							getChar();
 		void							skipChar(int);
-		Token							getToken();
-		Token							peekToken();
 
 	public:
-		std::string						exp();
-		bool							isEndOfExp();
-		double							toDouble(std::string);
+		Token							getToken();
+		Token							peekToken();
+		std::vector<Token>				getTokenList();
 		std::string						getNumber();
 
+	public:
+		bool							isEndOfExp();
+		double							toDouble(std::string);
+		
 	private:
 		std::string						exp_;
 		size_t							index_;
 
-	public:
-
-
 	};
+
+
+
+
+
 	inline char Scanner::peekChar()
 	{
-		return isEndOfExp() ? exp_[exp_.size() - 1] : exp_[index_];
+		if (exp_.size() != 0)
+		{
+			return isEndOfExp() ? exp_[exp_.size() - 1] : exp_[index_];
+		}
+		else
+		{
+			return char('-1');
+		}
 	}
 
 	inline char Scanner::getChar()
@@ -90,13 +67,19 @@ namespace Calculator
 
 	inline Token Scanner::peekToken()
 	{
-		Scanner tempSc = Scanner(exp_);
-		return tempSc.getToken();
+		std::string str(exp_.begin() + index_, exp_.end());
+		Scanner temp = Scanner(str);
+		return temp.getToken();
 	}
 
-	inline std::string Scanner::exp()
+	inline std::vector<Token> Scanner::getTokenList()
 	{
-		return exp_;
+		std::vector<Token> tokenList;
+		while (!isEndOfExp())
+		{
+			tokenList.push_back(getToken());
+		}
+		return tokenList;
 	}
 
 	inline bool Scanner::isEndOfExp()

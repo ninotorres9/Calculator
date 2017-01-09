@@ -1,10 +1,14 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
+#include "Scanner.h"
 #include "Parser.h"
+#include "Node.h"
+#include "Visitor.h"
 #include "Expression.h"
 
 #include <vector>
 #include <memory>
+#include <exception>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Calculator;
@@ -20,165 +24,188 @@ namespace TestCalculator
 		
 		TEST_METHOD(TestTokenType)
 		{
-			TokenType tokenType = TokenType::DECIMAL;
+			TokenType tokenType = TokenType::NUMBER;
 		}
 
-		TEST_METHOD(TestToken)
+		TEST_METHOD(TestScanner_GetChar)
 		{
-			Assert::AreEqual(Token(TokenType::DECIMAL, 1.5).value(), 1.5, L"Assign to token value");
-		}
-
-		TEST_METHOD(TestScanner)
-		{
-
-			Assert::AreEqual(Scanner("1+2").exp(), std::string("1+2"), L"Assign to expression");
-			Assert::AreEqual(Scanner("2+3").exp(), std::string("2+3"), L"Assign to expression");
-
-			// get char
 			Scanner scanner("1+2");
 			Assert::AreEqual(scanner.getChar(), '1', L"Get first char");
 			Assert::AreEqual(scanner.getChar(), '+', L"Get second char");
 			Assert::AreEqual(scanner.getChar(), '2', L"Get last char");
 			Assert::AreEqual(scanner.getChar(), '2', L"End of expression");
 			Assert::IsTrue(scanner.isEndOfExp(), L"Is end of expression");
+		}
 
-			// skip char
-			scanner = Scanner("1+2");
+		TEST_METHOD(TestScanner_SkipChar)
+		{
+			Scanner scanner = Scanner("1+2");
 			scanner.skipChar();
 			Assert::AreEqual(scanner.peekChar(), '+', L"skip 1 char");
-		
+
 			scanner = Scanner("1+5");
 			scanner.skipChar(2);
 			Assert::AreEqual(scanner.peekChar(), '5', L"skip 2 char");
+		}
 
-			// peek char
-			scanner = Scanner("2");
+		TEST_METHOD(TestScanner_PeekChar)
+		{
+			Scanner scanner = Scanner("2");
 			Assert::AreEqual(scanner.peekChar(), '2', L"Peek first char");
 			Assert::AreEqual(scanner.peekChar(), '2', L"peek end of expression");
-			
-			// token type
-			scanner = Scanner("1");
-			Assert::IsTrue(scanner.getToken().type() == TokenType::DECIMAL, L"Get token type");
-
-			// integer
-			scanner = Scanner("2");
-			Assert::AreEqual(scanner.getToken().value(), 2.0, L"Get token value for integer");
-
-			// multidigit integer
-			scanner = Scanner("32");
-			Assert::AreEqual(scanner.getToken().value(), 32.0, L"Get token value for mult integer");
-
-			// opening of the 0
-			scanner = Scanner("005");
-			Assert::AreEqual(scanner.getToken().value(), 5.0, L"Omit the opening of the 0");
-
-			// decimal
-			scanner = Scanner("1.5");
-			Assert::AreEqual(scanner.getToken().value(), 1.5, L"Get token for decimal");
-
-			// invalid token
-			scanner = Scanner("+");
-			Assert::IsTrue(scanner.getToken().type() == TokenType::INVALID, L"Invalid token");
-	
-			// peek token
-			scanner = Scanner("23");
-			Assert::AreEqual(scanner.peekToken().value(), 23.0, L"Peek token");
-			Assert::AreEqual(scanner.peekToken().value(), 23.0, L"Peek token");
-		
 		}
 
-		TEST_METHOD(TestExpParser)
+		TEST_METHOD(TestScanner_PeekChar_Null)
 		{
-
-			Parser *parser = new ExpParser("1+2");
-			Assert::AreEqual(parser->exp(), 3.0, L"Expression result for add");
-
-			parser = new ExpParser("1+2");
-			Assert::AreEqual(parser->exp(), 3.0, L"Expression result for add");
-
-			parser = new ExpParser("3-3+3-3");
-			Assert::AreEqual(parser->exp(), 0.0, L"Expression result for add and sub");
-
-			parser = new ExpParser("3*2");
-			Assert::AreEqual(parser->exp(), 6.0, L"Expression result for mul");
-
-			parser = new ExpParser("3+2*5/2-1");
-			Assert::AreEqual(parser->exp(), 7.0, L"Expression result for four operations");
-
-			parser = new ExpParser("(10+2)");
-			Assert::AreEqual(parser->exp(), 12.0, L"Expression result for parenthesis");
-
-			parser = new ExpParser("(10+2)*3*(1+2)");
-			Assert::AreEqual(parser->exp(), 108.0, L"Expression result for mixed");
-
-			parser = new ExpParser("0.5*2+10");
-			Assert::AreEqual(parser->exp(), 11.0, L"Expression result for demical");
-
-			parser = new ExpParser("3^2");
-			Assert::AreEqual(parser->exp(), 9.0, L"Expression result for square");
-
-			parser = new ExpParser("3^2+2");
-			Assert::AreEqual(parser->exp(), 11.0, L"Expression result for square");
+			Scanner scanner = Scanner("");
+			Assert::AreEqual(scanner.peekChar(), char('-1'), L"Peek first char");
 		}
 
-		TEST_METHOD(TestAsmParser)
-		{
-
-			auto asmParser = AsmParser("1");
-			Assert::AreEqual(asmParser.exp(), std::string("push 1.000\n"), L"generate result for one number");
-
-			asmParser = AsmParser("1+2");
-			Assert::AreEqual(asmParser.exp(), 
-				std::string("push 1.000\n") + "push 2.000\n" + "pop eax\n" + "pop ebx\n" 
-							+ "add eax, ebx\n" + "push eax\n",
-				L"generate result for add");
-
-			asmParser = AsmParser("3*3");
-			Assert::AreEqual(asmParser.exp(),
-				std::string("push 3.000\n") + "push 3.000\n" + "pop eax\n" + "pop ebx\n"
-					+ "imul eax, ebx\n" + "push eax\n",
-				L"generate result for mul");
-
-			asmParser = AsmParser("1+5*2");
-			Assert::AreEqual(asmParser.exp(),
-				std::string("push 1.000\n") + "push 5.000\n" + "push 2.000\n" + "pop eax\n" + "pop ebx\n"
-					+ "imul eax, ebx\n" + "push eax\n" + "pop eax\n" + "pop ebx\n" + "add eax, ebx\n"
-					+ "push eax\n",
-				L"generate result for mixed");
-
-			asmParser = AsmParser("(10+2)");
-			Assert::AreEqual(asmParser.exp(),
-				std::string("push 10.000\n") + "push 2.000\n" + "pop eax\n" + "pop ebx\n"
-				+ "add eax, ebx\n" + "push eax\n",
-				L"generate result for add");
-		}
-
-		//TEST_METHOD(TestExpression)
+		//TEST_METHOD(TestScanner_GetToken_Null)
 		//{
-		//	Expression expression = Expression("1+2+3");
-		//	double r = expression.result();
-		//	Assert::AreEqual(r, 6.0, L"expression result");
-		//	
-		//	expression = Expression("1*1+2");
-		//	Assert::AreEqual(expression.result(), 3.0);
+		//	auto scanner = Scanner("");
+		//	auto token = scanner.getToken();
+		//	//Assert::IsTrue(token.type() == TokenType::NUMBER, L"Get token type : decimal");
+		//	//Assert::IsTrue(token.value() == "1.5", L"Get token value : 1.5");
 		//}
 
+		TEST_METHOD(TestScanner_GetToken_Decimal)
+		{
+			auto scanner = Scanner("1.5");
+			auto token = scanner.getToken();
+			Assert::IsTrue(token.type() == TokenType::NUMBER, L"Get token type : decimal");
+			Assert::IsTrue(token.value() == "1.5", L"Get token value : 1.5");
+		}
 
+		TEST_METHOD(TestScanner_GetToken_Integer)
+		{
+			auto scanner = Scanner("50");
+			auto token = scanner.getToken();
+			Assert::IsTrue(token.type() == TokenType::NUMBER, L"Get token type : decimal");
+			Assert::IsTrue(token.value() == "50", L"Get token value : 50");
+		}
 
+		TEST_METHOD(TestScanner_GetToken_Plus)
+		{
+			auto scanner = Scanner("+");
+			auto token = scanner.getToken();
+			Assert::IsTrue(token.type() == TokenType::PLUS, L"Get token type : plus");
+			Assert::IsTrue(token.value() == "+", L"Get token value : +");
+		}
 
+		TEST_METHOD(TestScanner_GetToken_Minus)
+		{
+			auto scanner = Scanner("-");
+			auto token = scanner.getToken();
+			Assert::IsTrue(token.type() == TokenType::MINUS, L"Get token type : minus");
+			Assert::IsTrue(token.value() == "-", L"Get token value : -");
+		}
+
+		TEST_METHOD(TestScanner_GetToken_Mul)
+		{
+			auto scanner = Scanner("*");
+			auto token = scanner.getToken();
+			Assert::IsTrue(token.type() == TokenType::MUL, L"Get token type : mul");
+			Assert::IsTrue(token.value() == "*", L"Get token value : *");
+		}
+
+		TEST_METHOD(TestScanner_GetToken_Div)
+		{
+			auto scanner = Scanner("/");
+			auto token = scanner.getToken();
+			Assert::IsTrue(token.type() == TokenType::DIV, L"Get token type : div");
+			Assert::IsTrue(token.value() == "/", L"Get token value : /");
+		}
+
+		TEST_METHOD(TestScanner_PeekToken)
+		{
+			auto scanner = Scanner("23");
+			Assert::IsTrue(scanner.peekToken().value() == "23", L"Peek token");	
+		}
+
+		TEST_METHOD(TestScanner_PeekToken_Exp)
+		{
+			auto scanner = Scanner("1+2");
+			scanner.getToken();
+			Assert::IsTrue(scanner.peekToken().type() == TokenType::PLUS,	L"Peek token");
+		}
+
+		TEST_METHOD(TestScanner_GetTokenList)
+		{
+			auto scanner = Scanner("1+2");
+			auto list = scanner.getTokenList();
+			Assert::IsTrue(list[0].type() == TokenType::NUMBER, L"list_1 type : number");
+			Assert::IsTrue(list[1].type() == TokenType::PLUS,	L"list_2 type : plus");
+		}
+
+		TEST_METHOD(TestParser_Plus)
+		{
+			Parser parser = Parser("1+2");
+			auto node = parser.node();
+			Assert::IsTrue(node->value() == "+", L"root type : +");
+			Assert::IsTrue(node->left()->value() == "1");
+			Assert::IsTrue(node->right()->value() == "2");
+		}
+
+		TEST_METHOD(TestParser_Minus)
+		{
+			Parser parser = Parser("1-2");
+			auto node = parser.node();
+			Assert::IsTrue(node->value() == "-", L"root type : -");
+		}
+
+		TEST_METHOD(TestParser_Mul)
+		{
+			Parser parser = Parser("1*2");
+			auto node = parser.node();
+			Assert::IsTrue(node->value() == "*", L"root type : *");
+		}
+
+		TEST_METHOD(TestParser_Div)
+		{
+			Parser parser = Parser("1/2");
+			auto node = parser.node();
+			Assert::IsTrue(node->value() == "/", L"root type : /");
+		}
+
+		TEST_METHOD(TestParser_MulAndPlus)
+		{
+			Parser parser = Parser("1*2+3");
+			auto node = parser.node();
+			Assert::IsTrue(node->value() == "+", L"root type : +");
+			Assert::IsTrue(node->left()->value() == "*", L"left type : *");
+		}
+
+		TEST_METHOD(TestNode_Visitor)
+		{
+			Visitor* visitor = new Visitor();
+
+			auto plusNode = Parser("1+2").node();
+			Assert::AreEqual(plusNode->accept(visitor), 3.0, L"1 + 2 = 3.0");
+
+		}
+
+		TEST_METHOD(TestNode_Expression)
+		{
+			auto expression = Expression("1+2");
+			Assert::AreEqual(expression.result(), 3.0, L"1 + 2 = 3.0");
+
+			expression = Expression("3-1");
+			Assert::AreEqual(expression.result(), 2.0, L"3 - 1 = 2.0");
+
+			expression = Expression("3*1");
+			Assert::AreEqual(expression.result(), 3.0, L"3 * 1 = 3.0");
+
+			expression = Expression("10/2");
+			Assert::AreEqual(expression.result(), 5.0, L"10 / 2 = 5.0");
+
+			expression = Expression("1*5+2");
+			Assert::AreEqual(expression.result(), 7.0, L"1 * 5 + 2 = 7.0");
+		}
 
 
 	};
 }
-
-
-
-
-
-
-
-
-
 
 
 

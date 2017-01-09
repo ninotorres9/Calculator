@@ -1,171 +1,60 @@
 
+
 #include "stdafx.h"
 #include "Parser.h"
 
-using namespace Calculator;
-
-std::string AsmParser::exp3()
+namespace Calculator
 {
-	auto lhs = exp2();
-
-	while (!scanner_.isEndOfExp() && scanner_.peekChar() != ')')
+	Node* Parser::expNode2()
 	{
-		switch (scanner_.peekChar())
+		auto lhs = expNode1();
+
+		if (scanner_.peekToken().type() == TokenType::PLUS)
 		{
-		case '+':
-			scanner_.skipChar();	
-			lhs += exp3();
-			lhs += std::string("pop eax\n") + "pop ebx\n" + "add eax, ebx\n" + "push eax\n";
-			break;
-		case '-':
-			scanner_.skipChar();
-			lhs += exp3();
-			lhs += std::string("pop eax\n") + "pop ebx\n" + "sub eax, ebx\n" + "push eax\n";
-			break;
-		default:
-			break;
+			auto op = scanner_.getToken();
+			auto rhs = expNode2();
+
+			return new PlusNode(op, lhs, rhs);
 		}
-	}
-
-	return lhs;
-}
-
-std::string AsmParser::exp2()
-{
-	auto lhs = term();
-
-	switch (scanner_.peekChar())
-	{
-	case '*':
-		scanner_.skipChar();
-		lhs += exp2();
-		lhs += std::string("pop eax\n") + "pop ebx\n" + "imul eax, ebx\n" + "push eax\n";
-		break;
-	case '/':
-		scanner_.skipChar();
-		lhs += exp2();
-		lhs += std::string("pop eax\n") + "pop ebx\n" + "idiv eax, ebx\n" + "push eax\n";
-		break;
-	default:
-		break;
-	}
-
-	return lhs;
-}
-
-std::string AsmParser::term()
-{
-	std::string result;
-
-	if (scanner_.peekChar() == '(')
-	{
-		scanner_.skipChar();	
-		result = exp();
-		if (scanner_.peekChar() == ')')
+		else if (scanner_.peekToken().type() == TokenType::MINUS)
 		{
-			scanner_.skipChar(); //skip
+			auto op = scanner_.getToken();
+			auto rhs = expNode2();
+
+			return new MinusNode(op, lhs, rhs);
 		}
 		else
 		{
-			;
-		}
-	}
-	else
-	{
-		auto decimal = toThreeDecimals(scanner_.getToken().value());
-		result += std::string("push ") + decimal + "\n";
-	}
-
-
-	return result;
-}
-
-
-
-
-
-
-
-double Parser::exp3()
-{
-	auto lhs = exp2();
-
-	while (!scanner_.isEndOfExp() && scanner_.peekChar() != ')')
-	{
-		switch (scanner_.peekChar())
-		{
-		case '+':
-			handleAddExp(lhs);
-			break;
-		case '-':
-			handleSubExp(lhs);
-			break;
-		default:
-			break;
+			return lhs;
 		}
 	}
 
-	return lhs;
-}
-
-double Parser::exp2()
-{
-	auto lhs = exp1();
-
-	switch (scanner_.peekChar())
+	Node* Parser::expNode1()
 	{
-	case '*':
-		handleMulExp(lhs);
-		break;
-	case '/':
-		handleDivExp(lhs);
-		break;
-	default:
-		break;
-	}
+		auto lhs = termNode();
 
-	return lhs;
-}
-
-double Parser::exp1()
-{
-	auto lhs = term();
-
-	switch (scanner_.peekChar())
-	{
-	case '^':
-		handleSquareExp(lhs);
-		break;
-	default:
-		break;
-	}
-
-	return lhs;
-}
-
-
-double Parser::term()
-{
-	double result;
-
-	if (scanner_.peekChar() == '(')
-	{
-		scanner_.skipChar();
-		result = exp();
-		if (scanner_.peekChar() == ')')
+		if (scanner_.peekToken().type() == TokenType::MUL)
 		{
-			scanner_.skipChar();
+			auto op = scanner_.getToken();
+			auto rhs = expNode1();
+
+			return new MulNode(op, lhs, rhs);
+		}
+		else if (scanner_.peekToken().type() == TokenType::DIV)
+		{
+			auto op = scanner_.getToken();
+			auto rhs = expNode1();
+
+			return new DivNode(op, lhs, rhs);
 		}
 		else
 		{
-			;
+			return lhs;
 		}
 	}
-	else
+
+	Node* Parser::termNode()
 	{
-		handleTermExp(result);
+		return new NumberNode(scanner_.getToken());
 	}
-
-	return result;
-
 }

@@ -1,41 +1,37 @@
 #pragma once
 
 #include "Parser.h"
-#include <iostream>
-#include <fstream>
 
+#include <string>
 
-//namespace Calculator
-//{
-//	class Expression
-//	{
-//	public:
-//		Expression(std::string text) : expParser_(text),  asmParser_(text)
-//		{
-//			
-//		}
-//	public:
-//		void						toFile(std::string fileName);
-//		double						result();
-//
-//	private:
-//		ExpParser expParser_;
-//		AsmParser asmParser_;
-//		
-//	};
-//
-//	inline void Expression::toFile(std::string fileName)
-//	{
-//		auto text = asmParser_.exp();
-//		std::ofstream fout(fileName);
-//		fout << text;
-//	}
-//
-//	inline double Expression::result() { return expParser_.exp(); }
-//
-//}
+namespace Calculator
+{
+	class Expression
+	{
+	public:
+		Expression(std::string text);
+
+	public:
+		double						result();
+
+	private:
+		Node*						node_;
+		Visitor*					visitor_;
+	};
 
 
 
 
+
+	Expression::Expression(std::string text)
+	{
+		Parser parser = Parser(text);
+		node_ = parser.node();
+	}
+
+	inline double Expression::result()
+	{
+		return node_->accept(visitor_);
+	}
+}
 
