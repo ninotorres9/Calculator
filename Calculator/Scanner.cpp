@@ -9,36 +9,38 @@ using namespace Calculator;
 
 Token Scanner::getToken()
 {
-	if (isdigit(peekChar()))
+	skipSpace();
+
+	auto firstChar = peekChar();
+
+	if (isdigit(firstChar))
 	{
-		std::string value;
-		value.append(getNumber());
-		if (peekChar() == '.')
-		{
-			value.push_back(getChar());
-			value.append(getNumber());
-		}
-		return Token(TokenType::NUMBER, value);
+		return getNumberToken();
 	}
-	else if (peekChar() == '+')
+	else if (firstChar == '+') 
 	{
 		skipChar();	//skip the plus
 		return Token(TokenType::PLUS, "+");
 	}
-	else if (peekChar() == '-')
+	else if (firstChar == '-')
 	{
 		skipChar();	//skip the plus
 		return Token(TokenType::MINUS, "-");
 	}
-	else if (peekChar() == '*')
+	else if (firstChar == '*')
 	{
 		skipChar();	//skip the plus
 		return Token(TokenType::MUL, "*");
 	}
-	else if (peekChar() == '/')
+	else if (firstChar == '/')
 	{
 		skipChar();	//skip the plus
 		return Token(TokenType::DIV, "/");
+	}
+	else if (firstChar == '^')
+	{
+		skipChar();	// skip the power
+		return Token(TokenType::POWER, "^");
 	}
 	else
 	{

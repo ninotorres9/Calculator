@@ -31,7 +31,7 @@ namespace Calculator
 
 	Node* Parser::expNode1()
 	{
-		auto lhs = termNode();
+		auto lhs = expNode0();
 
 		if (scanner_.peekToken().type() == TokenType::MUL)
 		{
@@ -46,6 +46,23 @@ namespace Calculator
 			auto rhs = expNode1();
 
 			return new DivNode(op, lhs, rhs);
+		}
+		else
+		{
+			return lhs;
+		}
+	}
+
+	Node* Parser::expNode0()
+	{
+		auto lhs = termNode();
+
+		if (scanner_.peekToken().type() == TokenType::POWER)
+		{
+			auto op = scanner_.getToken();
+			auto rhs = termNode();
+
+			return new PowerNode(op, lhs, rhs);
 		}
 		else
 		{

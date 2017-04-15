@@ -61,6 +61,15 @@ namespace Calculator
 		virtual double accept(Visitor *visitor);
 	};
 
+	class PowerNode : public Node
+	{
+	public:
+		PowerNode(Token token, Node* left = nullptr, Node* right = nullptr) : Node(token, left, right) { ; }
+
+	public:
+		virtual double accept(Visitor *visitor);
+	};
+
 	class NumberNode : public Node
 	{
 	public:

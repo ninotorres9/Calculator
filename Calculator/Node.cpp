@@ -26,6 +26,11 @@ namespace Calculator
 		return visitor->visit(this);
 	}
 
+	double PowerNode::accept(Visitor *visitor)
+	{
+		return visitor->visit(this);
+	}
+
 	double NumberNode::accept(Visitor *visitor)
 	{
 		return visitor->visit(this);

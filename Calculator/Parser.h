@@ -14,14 +14,12 @@ namespace Calculator
 		Node*						node();
 		Node*						expNode2();
 		Node*						expNode1();
+		Node*						expNode0();
 		Node*						termNode();
 		
 	private:
 		Scanner scanner_;
 	};
-
-
-
 
 	inline Node* Parser::node()
 	{

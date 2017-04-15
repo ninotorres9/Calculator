@@ -52,7 +52,14 @@ namespace TestCalculator
 		{
 			Scanner scanner = Scanner("2");
 			Assert::AreEqual(scanner.peekChar(), '2', L"Peek first char");
-			Assert::AreEqual(scanner.peekChar(), '2', L"peek end of expression");
+			Assert::AreEqual(scanner.peekChar(), '2');
+		}
+
+		TEST_METHOD(TestScanner_PeekChar_EndOfExp)
+		{
+			Scanner scanner = Scanner("2");
+			Assert::AreEqual(scanner.getChar(), '2', L"Get first char");
+			Assert::AreEqual(scanner.peekChar(), char('-1'), L"Peek end of expression");
 		}
 
 		TEST_METHOD(TestScanner_PeekChar_Null)
@@ -61,13 +68,12 @@ namespace TestCalculator
 			Assert::AreEqual(scanner.peekChar(), char('-1'), L"Peek first char");
 		}
 
-		//TEST_METHOD(TestScanner_GetToken_Null)
-		//{
-		//	auto scanner = Scanner("");
-		//	auto token = scanner.getToken();
-		//	//Assert::IsTrue(token.type() == TokenType::NUMBER, L"Get token type : decimal");
-		//	//Assert::IsTrue(token.value() == "1.5", L"Get token value : 1.5");
-		//}
+		TEST_METHOD(TestScanner_GetToken_SkipSpace)
+		{
+			auto scanner = Scanner("1 + 2");
+			Assert::IsTrue(scanner.getToken().type() == TokenType::NUMBER,	L"Get first token type : decimal");
+			Assert::IsTrue(scanner.getToken().type() == TokenType::PLUS,	L"Get second token type : plus");
+		}
 
 		TEST_METHOD(TestScanner_GetToken_Decimal)
 		{
@@ -115,6 +121,14 @@ namespace TestCalculator
 			auto token = scanner.getToken();
 			Assert::IsTrue(token.type() == TokenType::DIV, L"Get token type : div");
 			Assert::IsTrue(token.value() == "/", L"Get token value : /");
+		}
+
+		TEST_METHOD(TestScanner_GetToken_Power)
+		{
+			auto scanner = Scanner("^");
+			auto token = scanner.getToken();
+			Assert::IsTrue(token.type() == TokenType::POWER, L"Get token type : power");
+			Assert::IsTrue(token.value() == "^", L"Get token value : ^");
 		}
 
 		TEST_METHOD(TestScanner_PeekToken)
@@ -176,13 +190,33 @@ namespace TestCalculator
 			Assert::IsTrue(node->left()->value() == "*", L"left type : *");
 		}
 
-		TEST_METHOD(TestNode_Visitor)
+		TEST_METHOD(TestParser_Power)
+		{
+			Parser parser = Parser("2^3");
+			auto node = parser.node();
+			Assert::IsTrue(node->value() == "^", L"root type : ^");
+		}
+
+		TEST_METHOD(TestNode_Visitor_Plus)
 		{
 			Visitor* visitor = new Visitor();
 
 			auto plusNode = Parser("1+2").node();
 			Assert::AreEqual(plusNode->accept(visitor), 3.0, L"1 + 2 = 3.0");
+		}
 
+		TEST_METHOD(TestNode_Visitor_Power)
+		{
+			Visitor* visitor = new Visitor();
+
+			auto powerNode = Parser("2^1").node();
+			Assert::AreEqual(powerNode->accept(visitor), 2.0, L"2 ^ 1 = 2.0");
+
+			powerNode = Parser("3^2").node();
+			Assert::AreEqual(powerNode->accept(visitor), 9.0, L"3 ^ 2 = 9.0");
+
+			powerNode = Parser("3^0").node();
+			Assert::AreEqual(powerNode->accept(visitor), 1.0, L"3 ^ 0 = 1.0");
 		}
 
 		TEST_METHOD(TestNode_Expression)
@@ -201,6 +235,9 @@ namespace TestCalculator
 
 			expression = Expression("1*5+2");
 			Assert::AreEqual(expression.result(), 7.0, L"1 * 5 + 2 = 7.0");
+
+			expression = Expression("2^1+5");
+			Assert::AreEqual(expression.result(), 7.0, L"2 ^ 1 + 5 = 7.0");
 		}
 
 

@@ -11,6 +11,7 @@ namespace Calculator
 		MINUS,
 		MUL,
 		DIV,
+		POWER,
 		INVALID,
 	};
 
@@ -27,7 +28,6 @@ namespace Calculator
 		TokenType					type_;
 		std::string					value_;
 	};
-
 
 	inline TokenType Token::type()
 	{
